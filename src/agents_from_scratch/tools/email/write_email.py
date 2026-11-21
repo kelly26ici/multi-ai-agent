@@ -8,7 +8,7 @@ from googleapiclient.discovery import build
 from langchain_core.tools import tool
 from pydantic import BaseModel, EmailStr, Field
 
-from agents_from_scratch.core.google import get_credentials
+from agents_from_scratch.core.google import MissingCredentialsError, get_credentials
 
 # -------------------------------------------------------------------------
 # write_email
@@ -26,7 +26,11 @@ class WriteEmailInput(BaseModel):
 @tool
 def write_email(email: WriteEmailInput) -> str:
     """Write and send an e-mail."""
-    service = build("gmail", "v1", credentials=get_credentials())
+    try:
+        credentials = get_credentials()
+    except MissingCredentialsError as exc:
+        return f"E-mail not sent: {exc}"
+    service = build("gmail", "v1", credentials=credentials)
     message = MIMEText(email.content)
     message["To"] = email.to
     message["Subject"] = email.subject
