@@ -6,6 +6,7 @@ readme = "README.md"
 authors = [{ name = "Rex Kelly", email = "rexk638@gmail.com" }]
 requires-python = ">=3.12"
 dependencies = [
+    "chainlit>=2.12.0",
     "deepagents>=0.7.41",
     "docling>=2.151.1",
     "google-api-python-client>=2.202.0",

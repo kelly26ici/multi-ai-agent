@@ -35,6 +35,16 @@ cp .env.example .env
 python lessons/01_models.py
 ```
 
+## Chat UI
+
+```bash
+chainlit run src/agents_from_scratch/app/chainlit.py -w
+```
+
+The UI streams the supervisor's answers into the chat. When the supervisor reaches the
+email writer the run pauses and asks for approval; approve or reject and the graph
+continues from where it stopped.
+
 ## Configuration
 
 `.env` is nested by provider with `__` as the delimiter:
