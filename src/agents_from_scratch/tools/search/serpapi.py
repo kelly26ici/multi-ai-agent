@@ -5,6 +5,7 @@
 # =========================================================================
 
 from langchain.tools import tool
+from pydantic import BaseModel, Field
 
 from agents_from_scratch.config.settings import settings
 from agents_from_scratch.core.clients import client
@@ -14,7 +15,13 @@ from agents_from_scratch.core.clients import client
 # =========================================================================
 
 
-@tool
+class SerpapiSearchInput(BaseModel):
+    """Input schema for serpapi_search."""
+
+    query: str = Field(description="The query string to search")
+
+
+@tool(args_schema=SerpapiSearchInput)
 async def serpapi_search(query: str) -> str:
     """Search Google with SerpAPI."""
     response = await client.get(
@@ -26,3 +33,13 @@ async def serpapi_search(query: str) -> str:
         },
     )
     return response.text
+
+
+# =========================================================================
+# GETTER
+# =========================================================================
+
+
+def get_tool():
+    """Return the SerpAPI search tool."""
+    return serpapi_search

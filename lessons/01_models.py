@@ -16,9 +16,9 @@ from agents_from_scratch.core.logger import logger
 # =========================================================================
 
 model = init_chat_model(
-    settings.default_model,
-    temperature=settings.temperature,
-    api_key=settings.nvidia_api_key.get_secret_value(),
+    settings.nvidia.models.default_model,
+    temperature=settings.nvidia.temperature.default,
+    api_key=settings.nvidia.api_key.get_secret_value(),
 )
 
 
@@ -30,7 +30,7 @@ configurable = init_chat_model(
     "nvidia:nvidia/nemotron-3.5-lightning-30b-a3b",
     temperature=0,
     configurable_fields="any",
-    api_key=settings.nvidia_api_key.get_secret_value(),
+    api_key=settings.nvidia.api_key.get_secret_value(),
 )
 
 
@@ -51,7 +51,9 @@ if __name__ == "__main__":
 
     logger.info("Invoking the configurable model")
     logger.info(
-        configurable.invoke(messages, config={"model": settings.default_model}).content
+        configurable.invoke(
+            messages, config={"model": settings.nvidia.models.default_model}
+        ).content
     )
 
     logger.info("Streaming tokens")
