@@ -25,6 +25,7 @@ dependencies = [
     "langgraph>=1.2.24",
     "loguru>=0.8.0",
     "pydantic-settings>=2.16.3",
+    "pydantic[email]>=2.14.4",
     "pymupdf>=2.1",
 ]
 
