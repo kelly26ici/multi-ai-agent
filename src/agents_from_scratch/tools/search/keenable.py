@@ -4,24 +4,15 @@
 # IMPORTS
 # =========================================================================
 
-from langchain.tools import tool
+from langchain_keenable import KeenableSearch
 
 from agents_from_scratch.config.settings import settings
-from agents_from_scratch.core.clients import client
 
 # =========================================================================
-# TOOL
+# GETTER
 # =========================================================================
 
 
-@tool
-async def keenable_search(query: str) -> str:
-    """Search the web with Keenable."""
-    key = settings.keenable_api_key.get_secret_value()
-    response = await client.post(
-        # TODO: Confirm the endpoint and payload at https://docs.keenable.ai.
-        "https://api.keenable.ai/search",
-        headers={"Authorization": f"Bearer {key}"},
-        json={"query": query},
-    )
-    return response.text
+def get_tool():
+    """Return the Keenable search tool."""
+    return KeenableSearch(api_key=settings.keenable_api_key.get_secret_value())

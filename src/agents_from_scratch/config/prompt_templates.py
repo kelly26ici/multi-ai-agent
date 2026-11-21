@@ -31,8 +31,6 @@ HITL_TOOLS_PROMPT = """
 # HUMAN-IN-THE-LOOP TOOLS WITH MEMORY
 # =========================================================================
 
-# TODO: Implement the manage_memory tool once the memory module is written.
-
 HITL_MEMORY_TOOLS_PROMPT = """
 1. write_email() - Write and send an e-mail.
 2. schedule_meeting() - Schedule a calendar meeting.

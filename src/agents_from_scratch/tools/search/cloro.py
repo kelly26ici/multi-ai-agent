@@ -5,6 +5,7 @@
 # =========================================================================
 
 from langchain.tools import tool
+from pydantic import BaseModel, Field
 
 from agents_from_scratch.config.settings import settings
 from agents_from_scratch.core.clients import client
@@ -14,14 +15,30 @@ from agents_from_scratch.core.clients import client
 # =========================================================================
 
 
-@tool
+class CloroSearchInput(BaseModel):
+    """Input schema for cloro_search."""
+
+    query: str = Field(description="The query string to search")
+
+
+@tool(args_schema=CloroSearchInput)
 async def cloro_search(query: str) -> str:
     """Search the web with Cloro."""
-    key = settings.cloro_api_key.get_secret_value()
     response = await client.post(
-        # TODO: Confirm the endpoint and payload at the Cloro docs.
         "https://api.cloro.ai/search",
-        headers={"Authorization": f"Bearer {key}"},
+        headers={
+            "Authorization": f"Bearer {settings.cloro_api_key.get_secret_value()}"
+        },
         json={"query": query},
     )
     return response.text
+
+
+# =========================================================================
+# GETTER
+# =========================================================================
+
+
+def get_tool():
+    """Return the Cloro search tool."""
+    return cloro_search

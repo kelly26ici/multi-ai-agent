@@ -37,8 +37,8 @@ def add(add_input: AddInput) -> int:
 
 agent = create_agent(
     init_chat_model(
-        settings.default_model,
-        api_key=settings.nvidia_api_key.get_secret_value(),
+        settings.nvidia.models.default_model,
+        api_key=settings.nvidia.api_key.get_secret_value(),
     ),
     tools=[add],
     system_prompt="You answer arithmetic questions with the add tool.",

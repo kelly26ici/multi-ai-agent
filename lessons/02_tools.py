@@ -46,8 +46,8 @@ def greet(greeting: GreetingInput) -> str:
 
 tools = [add, greet]
 model = init_chat_model(
-    settings.default_model,
-    api_key=settings.nvidia_api_key.get_secret_value(),
+    settings.nvidia.models.default_model,
+    api_key=settings.nvidia.api_key.get_secret_value(),
 ).bind_tools(tools)
 
 

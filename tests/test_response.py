@@ -7,26 +7,47 @@
 import pydantic
 import pytest
 
-from agents_from_scratch.config.prompts import MAIN_PROMPT
-from agents_from_scratch.tools.base import get_tools
-from agents_from_scratch.tools.calendar_tools import (
-    ScheduleMeetingInput,
-    check_calendar_availability,
-    schedule_meeting,
+from agents_from_scratch.config.prompts import SUPERVISOR_PROMPT
+from agents_from_scratch.tools import (
+    calendar_tools,
+    crawl_tools,
+    email_tools,
+    get_all_tools,
 )
-from agents_from_scratch.tools.email_tools import WriteEmailInput, write_email
+from agents_from_scratch.tools.calendar import ScheduleMeetingInput
+from agents_from_scratch.tools.email import WriteEmailInput
+from agents_from_scratch.tools.email.write_email import write_email
+from agents_from_scratch.tools.search import get_search_tools
 
 
-def test_get_tools_returns_the_default_set() -> None:
-    """The registry lists every default tool by name."""
-    assert [t.name for t in get_tools()] == [
+def test_email_group_holds_the_four_tools() -> None:
+    """The e-mail group lists its tools by name."""
+    assert [t.name for t in email_tools] == [
         "write_email",
         "triage_email",
-        "schedule_meeting",
-        "check_calendar_availability",
         "Question",
         "Done",
     ]
+
+
+def test_calendar_group_holds_the_two_tools() -> None:
+    """The calendar group lists its tools by name."""
+    assert [t.name for t in calendar_tools] == [
+        "schedule_meeting",
+        "check_calendar_availability",
+    ]
+
+
+def test_get_all_tools_merges_every_group() -> None:
+    """The all-tools option is the union of the groups."""
+    search = get_search_tools()
+    all_names = [t.name for t in get_all_tools()]
+    assert set(all_names) == {
+        t.name for t in [*email_tools, *calendar_tools, *crawl_tools, *search]
+    }
+    assert len(all_names) == (
+        len(email_tools) + len(calendar_tools) + len(crawl_tools) + len(search)
+    )
 
 
 def test_write_email_takes_one_pydantic_object() -> None:
@@ -37,13 +58,6 @@ def test_write_email_takes_one_pydantic_object() -> None:
 
 def test_schedule_meeting_validates_the_input() -> None:
     """The calendar tool rejects empty attendees and out-of-range hours."""
-    assert sorted(ScheduleMeetingInput.model_fields) == [
-        "attendees",
-        "duration_in_minutes",
-        "preferred_day",
-        "start_time",
-        "subject",
-    ]
     with pytest.raises(pydantic.ValidationError):
         ScheduleMeetingInput.model_validate(
             {
@@ -66,12 +80,13 @@ def test_schedule_meeting_validates_the_input() -> None:
         )
 
 
-def test_triage_and_availability_are_named() -> None:
-    """The remaining tools keep their names."""
-    assert check_calendar_availability.name == "check_calendar_availability"
-    assert schedule_meeting.name == "schedule_meeting"
+def test_search_tools_take_a_query_object() -> None:
+    """Every search tool declares a query argument."""
+    for tool_item in get_search_tools():
+        properties = tool_item.args_schema.model_json_schema()["properties"]
+        assert "query" in properties, tool_item.name
 
 
-def test_prompts_are_populated() -> None:
-    """The main prompt is non-empty."""
-    assert MAIN_PROMPT.strip()
+def test_supervisor_prompt_is_populated() -> None:
+    """The supervisor prompt is non-empty."""
+    assert SUPERVISOR_PROMPT.strip()

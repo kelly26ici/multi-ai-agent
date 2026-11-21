@@ -4,6 +4,12 @@
 # PROMPTS
 # =========================================================================
 
+SUPERVISOR_PROMPT = """
+You route work to the researcher and the email writer. Delegate research before
+drafting, ask when the request is ambiguous, and never invent facts the
+researcher did not report.
+"""
+
 MAIN_PROMPT = """
 You are an e-mail assistant. Read the incoming mail, decide what it needs, and use your
 tools to reply, schedule, or ask the user when something is unclear.

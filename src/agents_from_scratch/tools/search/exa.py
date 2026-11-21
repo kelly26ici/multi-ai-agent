@@ -4,22 +4,15 @@
 # IMPORTS
 # =========================================================================
 
-from langchain.tools import tool
+from langchain_exa import ExaSearchResults
 
 from agents_from_scratch.config.settings import settings
-from agents_from_scratch.core.clients import client
 
 # =========================================================================
-# TOOL
+# GETTER
 # =========================================================================
 
 
-@tool
-async def exa_search(query: str) -> str:
-    """Search the web with Exa."""
-    response = await client.post(
-        "https://api.exa.ai/search",
-        headers={"x-api-key": settings.exa_api_key.get_secret_value()},
-        json={"query": query, "type": "auto", "contents": {"highlights": True}},
-    )
-    return response.text
+def get_tool():
+    """Return the Exa search tool."""
+    return ExaSearchResults(api_key=settings.exa_api_key.get_secret_value())

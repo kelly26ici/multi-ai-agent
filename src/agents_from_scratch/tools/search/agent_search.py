@@ -5,6 +5,7 @@
 # =========================================================================
 
 from langchain.tools import tool
+from pydantic import BaseModel, Field
 
 from agents_from_scratch.core.clients import client
 
@@ -13,12 +14,27 @@ from agents_from_scratch.core.clients import client
 # =========================================================================
 
 
-@tool
+class AgentSearchInput(BaseModel):
+    """Input schema for agent_search."""
+
+    query: str = Field(description="The query string to search")
+
+
+@tool(args_schema=AgentSearchInput)
 async def agent_search(query: str) -> str:
     """Search the web with the free AgentSearch tier."""
     response = await client.post(
-        # TODO: Confirm the endpoint and payload at https://agentsearchhq.com.
         "https://api.agentsearchhq.com/search",
         json={"query": query},
     )
     return response.text
+
+
+# =========================================================================
+# GETTER
+# =========================================================================
+
+
+def get_tool():
+    """Return the AgentSearch tool."""
+    return agent_search

@@ -4,24 +4,13 @@
 # IMPORTS
 # =========================================================================
 
-from langchain.tools import tool
-
-from agents_from_scratch.config.settings import settings
-from agents_from_scratch.core.clients import client
+from langchain_linkup import LinkupSearchTool
 
 # =========================================================================
-# TOOL
+# GETTER
 # =========================================================================
 
 
-@tool
-async def linkup_search(query: str) -> str:
-    """Search the web with Linkup."""
-    response = await client.post(
-        "https://api.linkup.so/v1/search",
-        headers={
-            "Authorization": f"Bearer {settings.linkup_api_key.get_secret_value()}"
-        },
-        json={"q": query, "depth": "standard", "outputType": "searchResults"},
-    )
-    return response.text
+def get_tool():
+    """Return the Linkup search tool, keyed from LINKUP_API_KEY."""
+    return LinkupSearchTool(depth="standard")

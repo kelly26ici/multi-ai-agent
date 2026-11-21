@@ -46,7 +46,7 @@ def run() -> list[str]:
         chunk_size=200, chunk_overlap=20
     ).split_documents(documents)
     store = InMemoryVectorStore.from_documents(
-        chunks, NVIDIAEmbeddings(api_key=settings.nvidia_api_key.get_secret_value())
+        chunks, NVIDIAEmbeddings(api_key=settings.nvidia.api_key.get_secret_value())
     )
     return [
         doc.page_content
