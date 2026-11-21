@@ -60,22 +60,16 @@ async def ask_for_review(config: dict) -> None:
     await cl.AskActionMessage(
         content="The email writer is ready to run. Approve it?",
         actions=[
-            cl.Action(name="approve", value="approve", label="Approve"),
-            cl.Action(name="reject", value="reject", label="Reject"),
+            cl.Action(name="review", payload={"type": "approve"}, label="Approve"),
+            cl.Action(name="review", payload={"type": "reject"}, label="Reject"),
         ],
     ).send()
 
 
-@cl.action_callback("approve")
-async def on_approve(action: cl.Action) -> None:
-    """Resume the paused run with the approval."""
-    await resume(action, {"decisions": [{"type": "approve"}]})
-
-
-@cl.action_callback("reject")
-async def on_reject(action: cl.Action) -> None:
-    """Resume the paused run with the rejection."""
-    await resume(action, {"decisions": [{"type": "reject"}]})
+@cl.action_callback("review")
+async def on_review(action: cl.Action) -> None:
+    """Resume the paused run with the decision from the button payload."""
+    await resume(action, {"decisions": [{"type": action.payload["type"]}]})
 
 
 async def resume(action: cl.Action, decision: dict) -> None:
